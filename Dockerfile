@@ -2,9 +2,9 @@ FROM php:7.1
 
 ENV XDEBUG_VERSION 2.5.5
 
-RUN apt-get update
-
-RUN apt-get install -y \
+RUN apt-get update && \
+    apt-get install -y \
+    git \
     # gd
     libjpeg62-turbo-dev \
     libfreetype6-dev \
