@@ -1,23 +1,19 @@
-FROM php:7.1
+FROM php:7.2
 
 ENV XDEBUG_VERSION 2.5.5
 
 RUN apt-get update && \
     apt-get install -y \
     git \
-    # gd
+    gnupg \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
-    libpng12-dev \
+    libpng-dev \
     libxpm-dev \
-    # imap
     libc-client-dev \
     libkrb5-dev \
-    # php-ext-mcrypt
     libmcrypt-dev \
-    # php-ext-intl
     libicu-dev \
-    # php-ext-xmlrpx
     libxml2-dev 
 
 # Configure gd, imap
@@ -28,7 +24,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 RUN pecl install xdebug mongodb redis
 
 # Install php extensions
-RUN docker-php-ext-install mbstring gd gettext imap intl mcrypt mysqli opcache pcntl pdo_mysql xmlrpc zip
+RUN docker-php-ext-install mbstring gd gettext imap intl mysqli opcache pcntl pdo_mysql xmlrpc zip
 
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
