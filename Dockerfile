@@ -14,7 +14,8 @@ RUN apt-get update && \
     libkrb5-dev \
     libmcrypt-dev \
     libicu-dev \
-    libxml2-dev 
+    libxml2-dev \
+    libgmp-dev
 
 # Configure gd, imap
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-xpm-dir=/usr/include/ \
