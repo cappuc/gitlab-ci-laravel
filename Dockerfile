@@ -1,4 +1,4 @@
-FROM php:7.2
+FROM php:7.3
 
 ENV XDEBUG_VERSION 2.5.5
 
@@ -16,6 +16,7 @@ RUN apt-get update && \
     libicu-dev \
     libxml2-dev \
     libgmp-dev \
+    libzip-dev \
     unzip
 
 # Configure gd, imap
