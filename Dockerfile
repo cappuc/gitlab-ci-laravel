@@ -27,7 +27,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 RUN pecl install xdebug mongodb redis
 
 # Install php extensions
-RUN docker-php-ext-install mbstring gd gettext imap intl mysqli opcache pcntl pdo_mysql xmlrpc zip gmp bcmath exif
+RUN docker-php-ext-install mbstring gd gettext imap intl mysqli opcache pcntl pdo_mysql xmlrpc zip gmp bcmath exif soap
 
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
