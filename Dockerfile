@@ -1,33 +1,46 @@
-FROM php:7.3
+FROM php:7.4-cli
 
-ENV XDEBUG_VERSION 2.5.5
+RUN apt-get update \
+    && apt-get upgrade -y
 
-RUN apt-get update && \
-    apt-get install -y \
-    git \
-    gnupg \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    libpng-dev \
-    libxpm-dev \
-    libc-client-dev \
-    libkrb5-dev \
-    libmcrypt-dev \
-    libicu-dev \
-    libxml2-dev \
-    libgmp-dev \
-    libzip-dev \
-    unzip
+# Node repository
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+
+# Yarn repostitory
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+RUN apt-get install -y apt-transport-https gnupg build-essential
+
+RUN apt-get install -y \
+        git \
+        nodejs \
+        yarn \
+        libjpeg62-turbo-dev \
+        libfreetype6-dev \
+        libpng-dev \
+        libxpm-dev \
+        libc-client-dev \
+        libkrb5-dev \
+        libmcrypt-dev \
+        libicu-dev \
+        libxml2-dev \
+        libgmp-dev \
+        libzip-dev \
+        libssl-dev \
+        libonig-dev \
+        unzip
 
 # Configure gd, imap
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-xpm-dir=/usr/include/ \
-    && docker-php-ext-configure imap --with-imap --with-kerberos --with-imap-ssl
-
-# Install xdebug
-RUN pecl install xdebug mongodb redis
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-xpm
+RUN PHP_OPENSSL=yes docker-php-ext-configure imap --with-imap --with-kerberos --with-imap-ssl
 
 # Install php extensions
-RUN docker-php-ext-install mbstring gd gettext imap intl mysqli opcache pcntl pdo_mysql xmlrpc zip gmp bcmath exif soap
+RUN docker-php-ext-install -j$(nproc) mbstring gd gettext imap intl mysqli opcache pcntl pdo_mysql xmlrpc zip gmp bcmath exif soap
+
+# Install pecl extensions
+RUN pecl install xdebug mongodb redis
+RUN docker-php-ext-enable mongodb redis
 
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
@@ -44,18 +57,9 @@ RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
     && mv phpcs.phar /usr/local/bin/phpcs \
     && curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar \
     && chmod 755 phpcbf.phar \
-    && mv phpcbf.phar /usr/local/bin/phpcbf 
+    && mv phpcbf.phar /usr/local/bin/phpcbf
 
-# Install Node.js
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
-    && apt-get install -y nodejs build-essential
-
-# Install Yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-    && apt-get update && apt-get install -y yarn
-
-# Clean 
+# Clean
 RUN apt-get autoremove
 
 COPY entrypoint.sh /entrypoint.sh
