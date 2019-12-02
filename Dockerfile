@@ -29,6 +29,8 @@ RUN apt-get install -y \
         libzip-dev \
         libssl-dev \
         libonig-dev \
+        libmagickcore-dev \
+        libmagickwand-dev \
         unzip
 
 # Configure gd, imap
@@ -39,8 +41,8 @@ RUN PHP_OPENSSL=yes docker-php-ext-configure imap --with-imap --with-kerberos --
 RUN docker-php-ext-install -j$(nproc) mbstring gd gettext imap intl mysqli opcache pcntl pdo_mysql xmlrpc zip gmp bcmath exif soap
 
 # Install pecl extensions
-RUN pecl install xdebug mongodb redis
-RUN docker-php-ext-enable mongodb redis
+RUN pecl install xdebug mongodb redis imagick
+RUN docker-php-ext-enable mongodb redis imagick
 
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
