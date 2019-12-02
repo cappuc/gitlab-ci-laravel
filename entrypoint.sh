@@ -12,6 +12,11 @@ then
   composer config --global github-oauth.github.com "$COMPOSER_GITHUB"
 fi
 
+if [[ ! -z "$COMPOSER_GITLAB" ]]
+then
+  composer config --global gitlab-token.gitlab.com "$COMPOSER_GITLAB"
+fi
+
 #
 # If $TIMEZONE variable is passed to the image - it will set system timezone 
 # and php.ini date.timezone value as well
