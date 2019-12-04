@@ -41,7 +41,7 @@ RUN PHP_OPENSSL=yes docker-php-ext-configure imap --with-imap --with-kerberos --
 RUN docker-php-ext-install -j$(nproc) mbstring gd gettext imap intl mysqli opcache pcntl pdo_mysql xmlrpc zip gmp bcmath exif soap
 
 # Install pecl extensions
-RUN pecl install xdebug mongodb redis imagick
+RUN pecl install mongodb redis imagick xdebug pcov
 RUN docker-php-ext-enable mongodb redis imagick
 
 # Install composer and put binary into $PATH
