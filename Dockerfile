@@ -50,11 +50,6 @@ RUN rm -rf /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/ph
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
 
-# Install phpunit and put binary into $PATH
-RUN curl -sSLo phpunit.phar https://phar.phpunit.de/phpunit.phar \
-    && chmod 755 phpunit.phar \
-    && mv phpunit.phar /usr/local/bin/phpunit
-
 # Install PHP Code sniffer
 RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
     && chmod 755 phpcs.phar \
