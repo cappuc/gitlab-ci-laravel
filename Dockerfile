@@ -1,5 +1,7 @@
 FROM php:7.4-cli
 
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+
 ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
 
 # Node repository
@@ -13,10 +15,12 @@ RUN apt-get update \
     && apt-get upgrade -y
 
 RUN apt-get install -y \
+        chromium \
         git \
         nodejs \
         yarn \
-        unzip
+        unzip \
+    && npm install --global --unsafe-perm puppeteer@2.0.0
 
 RUN chmod uga+x /usr/local/bin/install-php-extensions \
     && install-php-extensions \
