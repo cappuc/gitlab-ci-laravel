@@ -1,6 +1,7 @@
 FROM php:7.4-cli
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
 ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
 
@@ -19,8 +20,8 @@ RUN apt-get install -y \
         git \
         nodejs \
         yarn \
-        unzip \
-    && npm install --global --unsafe-perm puppeteer@2.0.0
+        sudo \
+        unzip
 
 RUN chmod uga+x /usr/local/bin/install-php-extensions \
     && install-php-extensions \
@@ -58,8 +59,22 @@ RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
     && chmod 755 phpcbf.phar \
     && mv phpcbf.phar /usr/local/bin/phpcbf
 
+# Install puppeteer
+RUN npm install --global --unsafe-perm puppeteer@^2.0.0
+
 # Clean
 RUN apt-get autoremove
+
+# Add non-privileged user
+RUN groupadd -r user \
+    && useradd -r -g user -G audio,video,sudo user \
+    && mkdir -p /home/user \
+    && chown -R user:user /home/user \
+    && echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# Run everything after as non-privileged user.
+USER user
+WORKDIR /home/user
 
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

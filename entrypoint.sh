@@ -2,10 +2,10 @@
 set -e
 
 # With env variable WITH_XDEBUG=1 xdebug extension will be enabled
-[ ! -z "$WITH_XDEBUG" ] && docker-php-ext-enable xdebug
+[ ! -z "$WITH_XDEBUG" ] && sudo docker-php-ext-enable xdebug
 
 # With env variable WITH_PCOV=1 pcov extension will be enabled
-[ ! -z "$WITH_PCOV" ] && docker-php-ext-enable pcov
+[ ! -z "$WITH_PCOV" ] && sudo docker-php-ext-enable pcov
 
 # Provide github token if you are using composer a lot in non-interactive mode
 # Otherwise one day it will get stuck with request for authorization
@@ -32,9 +32,9 @@ fi
 
 if [[ ! -z "$TIMEZONE" ]]
 then
-  echo "$TIMEZONE" > /etc/timezone
-  dpkg-reconfigure -f noninteractive tzdata
+  sudo echo "$TIMEZONE" > /etc/timezone
+  sudo dpkg-reconfigure -f noninteractive tzdata
 fi
-echo "date.timezone=`cat /etc/timezone`" > /usr/local/etc/php/conf.d/timezone.ini
+sudo sh -c 'echo "date.timezone=`cat /etc/timezone`" > /usr/local/etc/php/conf.d/timezone.ini'
 
 exec "$@"
