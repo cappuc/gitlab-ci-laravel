@@ -69,7 +69,9 @@ RUN apt-get autoremove
 RUN groupadd -r user \
     && useradd -r -g user -G audio,video,sudo user \
     && mkdir -p /home/user \
+    && mkdir -p /builds \
     && chown -R user:user /home/user \
+    && chown -R user:user /builds \
     && echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Run everything after as non-privileged user.
