@@ -27,22 +27,22 @@ RUN chmod uga+x /usr/local/bin/install-php-extensions \
     && install-php-extensions \
         bcmath \
         exif \
-    	gd \
-    	gettext \
-    	gmp \
+    	  gd \
+    	  gettext \
+    	  gmp \
         imagick \
-    	imap \
-    	intl \
-    	mysqli \
-    	opcache \
-    	pcntl \
-    	pdo_mysql \
+    	  imap \
+    	  intl \
+    	  mysqli \
+    	  opcache \
+    	  pcntl \
+    	  pdo_mysql \
         redis \
-    	soap \
-    	xdebug \
-    	pcov \
-    	xmlrpc \
-    	zip
+    	  soap \
+    	  xdebug \
+    	  pcov \
+    	  xmlrpc \
+    	  zip
 
 # Disable xdebug & pcov
 RUN rm -rf /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
@@ -60,7 +60,7 @@ RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
     && mv phpcbf.phar /usr/local/bin/phpcbf
 
 # Install puppeteer
-RUN npm install --global --unsafe-perm puppeteer@^2.0.0
+RUN npm install --global --unsafe-perm puppeteer
 
 # Clean
 RUN apt-get autoremove
