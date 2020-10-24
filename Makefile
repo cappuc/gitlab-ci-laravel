@@ -16,7 +16,7 @@ php73:
 	docker build -t ${IMAGE}:php7.3 -f php73.Dockerfile .
 
 push-php80-rc:
-	docker push ${IMAGE}:php8.0
+	docker push ${IMAGE}:php8.0-rc
 
 push-php74:
 	docker push ${IMAGE}:php7.4
