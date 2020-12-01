@@ -1,4 +1,4 @@
-FROM php:8.0-rc-cli
+FROM php:8.0-cli
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
