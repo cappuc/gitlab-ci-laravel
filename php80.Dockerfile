@@ -30,7 +30,7 @@ RUN chmod uga+x /usr/local/bin/install-php-extensions \
     	  gd \
     	  gettext \
     	  gmp \
-#        imagick \
+        imagick \
     	  imap \
     	  intl \
     	  mysqli \
