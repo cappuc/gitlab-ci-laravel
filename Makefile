@@ -17,10 +17,10 @@ php73:
 
 push-php80:
 	docker push ${IMAGE}:php8.0
+	docker push ${IMAGE}:latest
 
 push-php74:
 	docker push ${IMAGE}:php7.4
-	docker push ${IMAGE}:latest
 
 push-php73:
 	docker push ${IMAGE}:php7.3

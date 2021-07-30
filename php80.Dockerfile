@@ -6,7 +6,7 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
 
 # Node repository
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 
 # Yarn repostitory
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
@@ -30,6 +30,8 @@ RUN chmod uga+x /usr/local/bin/install-php-extensions \
     	  gd \
     	  gettext \
     	  gmp \
+        grpc \
+        protobuf \
         imagick \
     	  imap \
     	  intl \
@@ -41,7 +43,6 @@ RUN chmod uga+x /usr/local/bin/install-php-extensions \
     	  soap \
     	  xdebug \
     	  pcov \
-#    	  xmlrpc \
     	  zip
 
 # Disable xdebug & pcov
