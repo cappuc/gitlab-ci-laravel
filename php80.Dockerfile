@@ -24,7 +24,7 @@ RUN \
     && apt-get autoremove \
    && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sL https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions -o /usr/local/bin/install-php-extensions \
+RUN curl -sSLf https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /usr/local/bin/install-php-extensions \
     && chmod +x /usr/local/bin/install-php-extensions \
     && install-php-extensions \
         bcmath \
