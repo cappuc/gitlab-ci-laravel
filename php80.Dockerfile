@@ -5,7 +5,7 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
 RUN \
     # Node repository
-    curl -sL https://deb.nodesource.com/setup_16.x | bash - \
+    curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     # Yarn repostitory
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
@@ -21,6 +21,9 @@ RUN \
         unzip \
     && apt-get autoremove \
    && rm -rf /var/lib/apt/lists/*
+
+# Install pnpm
+RUN curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
 
 RUN curl -sSLf https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /usr/local/bin/install-php-extensions \
     && chmod +x /usr/local/bin/install-php-extensions \
@@ -58,7 +61,7 @@ RUN curl -L https://cs.symfony.com/download/php-cs-fixer-v3.phar -o /usr/local/b
     && chmod +x /usr/local/bin/php-cs-fixer
 
 # Install puppeteer
-RUN npm install --global --unsafe-perm puppeteer@8.0.0
+RUN npm install --global --unsafe-perm puppeteer@14.4.1
 
 # Add non-privileged user
 RUN groupadd -r user \
