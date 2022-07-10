@@ -13,7 +13,7 @@ RUN \
     && apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y \
-        chromium=90.* \
+        chromium \
         git \
         nodejs \
         yarn \
@@ -40,7 +40,7 @@ RUN curl -sSLf https://github.com/mlocati/docker-php-extension-installer/release
     	  pcntl \
     	  pcov \
     	  pdo_mysql \
-        # protobuf \
+        protobuf \
         redis \
     	  soap \
     	  xdebug \

@@ -3,8 +3,6 @@ FROM php:8.0-cli
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
-ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
-
 RUN \
     # Node repository
     curl -sL https://deb.nodesource.com/setup_16.x | bash - \
@@ -15,7 +13,7 @@ RUN \
     && apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y \
-        chromium=90.* \
+        chromium \
         git \
         nodejs \
         yarn \
