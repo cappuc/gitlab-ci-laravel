@@ -1,7 +1,16 @@
-FROM php:8.0-cli
+FROM php:8.0-cli as php-extension-installer
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions
 
+
+FROM php-extension-installer as php-grpc
+ENV PHP_GRPC_VERSION=1.48.0
+RUN install-php-extensions grpc-${PHP_GRPC_VERSION}
+
+FROM php-extension-installer
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
+ENV PHP_EXTENSIONS_PATH=/usr/local/lib/php/extensions/no-debug-non-zts-20200930
 
 RUN \
     # Node repository
@@ -33,7 +42,6 @@ RUN curl -sSLf https://github.com/mlocati/docker-php-extension-installer/release
     gd \
     gettext \
     gmp \
-    grpc \
     imagick \
     imap \
     intl \
@@ -48,10 +56,11 @@ RUN curl -sSLf https://github.com/mlocati/docker-php-extension-installer/release
     sockets \
     xdebug \
     zip \
-    # Strip debug symbols
-    && strip --strip-all /usr/local/lib/php/extensions/*/*.so \
     # Disable xdebug & pcov
     && rm -rf /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
+
+COPY --from=php-grpc ${PHP_EXTENSIONS_PATH}/grpc.so ${PHP_EXTENSIONS_PATH}/grpc.so
+RUN docker-php-ext-enable grpc
 
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
