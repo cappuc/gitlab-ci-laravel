@@ -13,14 +13,14 @@ RUN \
     && apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y \
-        chromium \
-        git \
-        nodejs \
-        yarn \
-        sudo \
-        unzip \
+    chromium \
+    git \
+    nodejs \
+    yarn \
+    sudo \
+    unzip \
     && apt-get autoremove \
-   && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
 RUN curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
@@ -29,25 +29,26 @@ RUN curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
 RUN curl -sSLf https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /usr/local/bin/install-php-extensions \
     && chmod +x /usr/local/bin/install-php-extensions \
     && install-php-extensions \
-        bcmath \
-        exif \
-    	  gd \
-    	  gettext \
-    	  gmp \
-        grpc \
-        imagick \
-    	  imap \
-    	  intl \
-    	  mysqli \
-    	  opcache \
-    	  pcntl \
-    	  pcov \
-    	  pdo_mysql \
-        protobuf \
-        redis \
-    	  soap \
-    	  xdebug \
-    	  zip \
+    bcmath \
+    exif \
+    gd \
+    gettext \
+    gmp \
+    grpc \
+    imagick \
+    imap \
+    intl \
+    mysqli \
+    opcache \
+    pcntl \
+    pcov \
+    pdo_mysql \
+    protobuf \
+    redis \
+    soap \
+    sockets \
+    xdebug \
+    zip \
     # Strip debug symbols
     && strip --strip-all /usr/local/lib/php/extensions/*/*.so \
     # Disable xdebug & pcov
