@@ -73,6 +73,8 @@ RUN curl -L https://cs.symfony.com/download/php-cs-fixer-v3.phar -o /usr/local/b
 # Install puppeteer
 RUN npm install --global --unsafe-perm puppeteer@14.4.1
 
+COPY php $PHP_INI_DIR/conf.d
+
 # Add non-privileged user
 RUN groupadd -r user \
     && useradd -r -g user -G audio,video,sudo user \
