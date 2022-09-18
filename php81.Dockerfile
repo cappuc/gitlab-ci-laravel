@@ -50,7 +50,7 @@ RUN install-php-extensions \
     pcntl \
     pcov \
     pdo_mysql \
-    protobuf \
+    protobuf-3.21.6 \
     redis \
     soap \
     sockets \

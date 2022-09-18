@@ -50,7 +50,7 @@ RUN curl -sSLf https://github.com/mlocati/docker-php-extension-installer/release
     pcntl \
     pcov \
     pdo_mysql \
-    protobuf \
+    protobuf-3.21.6 \
     redis \
     soap \
     sockets \
