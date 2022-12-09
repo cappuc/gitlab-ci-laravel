@@ -5,23 +5,24 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-# Node repository
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-
-# Yarn repostitory
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-
-RUN apt-get update \
-    && apt-get upgrade -y
-
-RUN apt-get install -y \
-        chromium \
-        git \
-        nodejs \
-        yarn \
-        sudo \
-        unzip
+RUN \
+    # Node repository
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+    # Yarn repostitory
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    # Install packages
+    && apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y \
+    chromium \
+    git \
+    nodejs \
+    yarn \
+    sudo \
+    unzip \
+    && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN chmod uga+x /usr/local/bin/install-php-extensions \
     && install-php-extensions \
@@ -60,7 +61,7 @@ RUN curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar \
     && mv phpcbf.phar /usr/local/bin/phpcbf
 
 # Install puppeteer
-RUN npm install --global --unsafe-perm puppeteer
+RUN npm install --global --unsafe-perm puppeteer@19.2.2
 
 # Clean
 RUN apt-get autoremove
