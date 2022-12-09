@@ -39,7 +39,7 @@ RUN chmod uga+x /usr/local/bin/install-php-extensions \
     	  pdo_mysql \
         redis \
     	  soap \
-    	  xdebug \
+    	  xdebug-3.1.6 \
     	  pcov \
     	  xmlrpc \
     	  zip
