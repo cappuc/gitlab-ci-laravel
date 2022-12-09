@@ -1,12 +1,13 @@
 FROM php:8.2-cli as php-extension-installer
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions
-RUN export PHP_EXTENSIONS_PATH=$(php-config --extension-dir)
 
 
 FROM php-extension-installer as php-grpc
 ENV PHP_GRPC_VERSION=1.51.1
-RUN install-php-extensions grpc-${PHP_GRPC_VERSION}
+RUN install-php-extensions grpc-${PHP_GRPC_VERSION} \
+    && mkdir -p /out \
+    && cp $(php-config --extension-dir)/grpc.so /out/grpc.so
 
 
 FROM php-extension-installer
@@ -59,8 +60,9 @@ RUN install-php-extensions \
     # Disable xdebug & pcov
     && rm -rf /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
 
-COPY --from=php-grpc ${PHP_EXTENSIONS_PATH}/grpc.so ${PHP_EXTENSIONS_PATH}/grpc.so
-RUN docker-php-ext-enable grpc
+COPY --from=php-grpc /out/grpc.so /tmp/extensions/grpc.so
+RUN mv /tmp/extensions/*.so $(php-config --extension-dir)/ \
+  && docker-php-ext-enable grpc
 
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
