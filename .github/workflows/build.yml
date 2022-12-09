@@ -10,7 +10,7 @@ on:
 
 jobs:
 
-  laravel-app:
+  build:
     runs-on: ubuntu-latest
 
     strategy:
