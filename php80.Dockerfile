@@ -4,7 +4,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions
 
 
 FROM php-extension-installer as php-grpc
-ENV PHP_GRPC_VERSION=1.48.0
+ENV PHP_GRPC_VERSION=1.51.1
 RUN install-php-extensions grpc-${PHP_GRPC_VERSION}
 
 FROM php-extension-installer
@@ -50,7 +50,7 @@ RUN curl -sSLf https://github.com/mlocati/docker-php-extension-installer/release
     pcntl \
     pcov \
     pdo_mysql \
-    protobuf-3.21.6 \
+    protobuf-3.21.11 \
     redis \
     soap \
     sockets \
@@ -66,12 +66,8 @@ RUN docker-php-ext-enable grpc
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
 
-# Install PHP cs fixer
-RUN curl -L https://cs.symfony.com/download/php-cs-fixer-v3.phar -o /usr/local/bin/php-cs-fixer \
-    && chmod +x /usr/local/bin/php-cs-fixer
-
 # Install puppeteer
-RUN npm install --global --unsafe-perm puppeteer@14.4.1
+RUN npm install --global --unsafe-perm puppeteer@19.2.2
 
 COPY php $PHP_INI_DIR/conf.d
 
