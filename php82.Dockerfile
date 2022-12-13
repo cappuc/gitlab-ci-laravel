@@ -4,7 +4,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions
 
 
 FROM php-extension-installer as php-grpc
-ENV PHP_GRPC_VERSION=1.51.1
+ENV PHP_GRPC_VERSION=1.49.0
 RUN install-php-extensions grpc-${PHP_GRPC_VERSION} \
     && mkdir -p /out \
     && cp $(php-config --extension-dir)/grpc.so /out/grpc.so
