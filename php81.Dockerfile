@@ -25,6 +25,7 @@ RUN \
     && apt-get upgrade -y \
     && apt-get install -y \
     chromium \
+    chromium-driver \
     git \
     nodejs \
     yarn \
