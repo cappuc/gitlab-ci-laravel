@@ -16,10 +16,7 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
 RUN \
     # Node repository
-    curl -sL https://deb.nodesource.com/setup_18.x | bash - \
-    # Yarn repostitory
-    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    curl -sL https://deb.nodesource.com/setup_20.x | bash - \
     # Install packages
     && apt-get update \
     && apt-get upgrade -y \
@@ -28,14 +25,15 @@ RUN \
     chromium-driver \
     git \
     nodejs \
-    yarn \
     sudo \
     unzip \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pnpm
-RUN curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm
+# Install yarn & pnpm
+RUN corepack enable \
+    && corepack prepare pnpm@latest --activate \
+    && corepack prepare yarn@1.22.11 --activate
 
 # Install php extensions
 RUN install-php-extensions \
@@ -52,25 +50,26 @@ RUN install-php-extensions \
     pcntl \
     pcov \
     pdo_mysql \
-    protobuf-3.21.11 \
+    protobuf \
     redis \
     soap \
     sockets \
     xdebug \
+    yaml \
     zip \
     # Disable xdebug & pcov
     && rm -rf /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
 
 COPY --from=php-grpc /out/grpc.so /tmp/extensions/grpc.so
 RUN mv /tmp/extensions/*.so $(php-config --extension-dir)/ \
-  && docker-php-ext-enable grpc
+    && docker-php-ext-enable grpc
 
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
 
 # Install puppeteer
-RUN npm install --global --unsafe-perm puppeteer@19.2.2
+RUN npm install --global --unsafe-perm puppeteer@21.1.0
 
 COPY php $PHP_INI_DIR/conf.d
 
