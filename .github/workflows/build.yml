@@ -9,7 +9,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
 
@@ -17,20 +16,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - tag: 'php7.3'
-            dockerfile: php73.Dockerfile
-          - tag: 'php7.4'
-            dockerfile: php74.Dockerfile
-          - tag: 'php8.0'
+          - tag: "php8.0"
             dockerfile: php80.Dockerfile
-          - tag: 'php8.1'
+          - tag: "php8.1"
             dockerfile: php81.Dockerfile
-          - tag: 'php8.2'
+          - tag: "php8.2"
             dockerfile: php82.Dockerfile
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -53,7 +48,7 @@ jobs:
             ${{ runner.os }}-buildx-gitlab-ci-laravel-${{ matrix.tag }}
 
       - name: Build docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./${{ matrix.dockerfile }}
