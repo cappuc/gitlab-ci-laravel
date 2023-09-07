@@ -29,7 +29,7 @@ RUN apt-get update \
     chromium \
     chromium-driver \
     git \
-    nodejs \
+    nodejs=20.5.1* \
     sudo \
     unzip \
     && apt-get autoremove \
