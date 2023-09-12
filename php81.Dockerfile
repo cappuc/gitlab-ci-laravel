@@ -76,6 +76,9 @@ RUN curl -sS https://getcomposer.org/installer | php \
 # Install puppeteer
 RUN npm install --global --unsafe-perm puppeteer@21.1.0
 
+# Install bun
+RUN curl -fsSL https://bun.sh/install | bash
+
 COPY php $PHP_INI_DIR/conf.d
 
 # Add non-privileged user
