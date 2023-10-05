@@ -22,6 +22,8 @@ jobs:
             dockerfile: php81.Dockerfile
           - tag: "php8.2"
             dockerfile: php82.Dockerfile
+          - tag: "php8.3"
+            dockerfile: php83.Dockerfile
 
     steps:
       - name: Checkout code
