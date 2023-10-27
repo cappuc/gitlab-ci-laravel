@@ -6,7 +6,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions
 
 
 FROM php-extension-installer as php-grpc
-ENV PHP_GRPC_VERSION=1.49.0
+ENV PHP_GRPC_VERSION=1.58.0
 RUN install-php-extensions grpc-${PHP_GRPC_VERSION} \
     && mkdir -p /out \
     && cp $(php-config --extension-dir)/grpc.so /out/grpc.so
@@ -31,11 +31,10 @@ RUN apt-get update \
     chromium \
     chromium-driver \
     git \
-    nodejs=20.5.1* \
+    nodejs \
     sudo \
     unzip \
-    && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get autoremove
 
 # Install yarn & pnpm
 RUN corepack enable \

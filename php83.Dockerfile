@@ -34,8 +34,7 @@ RUN apt-get update \
     nodejs \
     sudo \
     unzip \
-    && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get autoremove
 
 # Install yarn & pnpm
 RUN corepack enable \
