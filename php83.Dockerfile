@@ -1,81 +1,128 @@
 # syntax=docker/dockerfile:1.4
 
-FROM php:8.3-rc-cli as php-extension-installer
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions
+ARG DEBIAN_VERSION=bookworm
+ARG NODE_VERSION=20
+
+FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
 
 
-FROM php-extension-installer as php-grpc
-ENV PHP_GRPC_VERSION=1.58.0
-RUN install-php-extensions grpc-${PHP_GRPC_VERSION} \
-    && mkdir -p /out \
-    && cp $(php-config --extension-dir)/grpc.so /out/grpc.so
+ARG DEBIAN_VERSION
+FROM debian:${DEBIAN_VERSION}-slim as base
+COPY --from=xx / /
+ARG TARGETPLATFORM
+WORKDIR /
 
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PHP_INI_DIR /etc/php/8.3/cli
 
-FROM php-extension-installer
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
+# Install dependencies for repository management
+RUN xx-apt-get update \
+    && xx-apt-get install -y ca-certificates curl gnupg
 
 # Node repository
-ENV NODE_MAJOR 20
-RUN apt-get update \
-    && apt-get install -y ca-certificates curl gnupg \
-    && mkdir -p /etc/apt/keyrings \
-    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+ARG NODE_VERSION
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_VERSION}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+
+# PHP repository
+ARG DEBIAN_VERSION
+RUN curl -fsSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ ${DEBIAN_VERSION} main" | tee /etc/apt/sources.list.d/php.list
+
+# Cleanup
+RUN xx-apt-get update \
+    && xx-apt-get upgrade -y \
+    && xx-apt-get autoremove
+
+
+FROM base as php-extensions
+ARG TARGETPLATFORM
+
+RUN xx-apt-get install -y \
+      libyaml-dev \
+      libz-dev \
+      php8.3-dev \
+      php8.3-xml \
+      php-pear
+
+RUN pecl install grpc \
+    && pecl install pcov \
+    && pecl install protobuf \
+    && pecl install redis \
+    && pecl install yaml
+
+RUN mkdir -p /out \
+    && cp $(php-config --extension-dir)/grpc.so /out/grpc.so \
+    && cp $(php-config --extension-dir)/pcov.so /out/pcov.so \
+    && cp $(php-config --extension-dir)/protobuf.so /out/protobuf.so \
+    && cp $(php-config --extension-dir)/redis.so /out/redis.so \
+    && cp $(php-config --extension-dir)/yaml.so /out/yaml.so
+
+
+FROM base
 
 # Install packages
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y \
-    chromium \
-    chromium-driver \
-    git \
-    nodejs \
-    sudo \
-    unzip \
-    && apt-get autoremove
+RUN xx-apt-get install -y \
+      chromium \
+      chromium-driver \
+      git \
+      gnupg \
+      libyaml-0-2 \
+      nodejs \
+      software-properties-common \
+      sudo \
+      tzdata \
+      unzip \
+      wget
+
+# Install php & extensions
+RUN xx-apt-get install -y \
+      php8.3 \
+      php8.3-bcmath \
+      php8.3-exif \
+      php8.3-gd \
+      php8.3-gettext \
+      php8.3-gmp \
+#      php8.3-grpc \
+#      php8.3-imagick \
+      php8.3-imap \
+      php8.3-intl \
+      php8.3-mysqli \
+      php8.3-opcache \
+#      php8.3-pcov \
+      php8.3-mysql \
+#      php8.3-protobuf \
+#      php8.3-redis \
+      php8.3-soap \
+      php8.3-sockets \
+#      php8.3-xdebug \
+      php8.3-xml \
+#      php8.3-yaml \
+      php8.3-zip
+
+COPY --from=php-extensions /out/*.so /tmp/php-extensions/
+RUN mv /tmp/php-extensions/*.so $(php -r 'echo ini_get("extension_dir");')/ \
+    && rm -rf /tmp/php-extensions \
+    && echo "extension=grpc.so" > /etc/php/8.3/mods-available/grpc.ini && phpenmod grpc \
+    && echo "extension=pcov.so" > /etc/php/8.3/mods-available/pcov.ini \
+    && echo "extension=protobuf.so" > /etc/php/8.3/mods-available/protobuf.ini && phpenmod protobuf \
+    && echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenmod redis \
+    && echo "extension=yaml.so" > /etc/php/8.3/mods-available/yaml.ini && phpenmod yaml
 
 # Install yarn & pnpm
 RUN corepack enable \
     && corepack prepare pnpm@latest --activate \
     && corepack prepare yarn@1.22.11 --activate
 
-# Install php extensions
-RUN install-php-extensions \
-    bcmath \
-    exif \
-    gd \
-    gettext \
-    gmp \
-    # imagick \
-    imap \
-    intl \
-    mysqli \
-    opcache \
-    pcntl \
-    pcov \
-    pdo_mysql \
-    protobuf \
-    redis \
-    soap \
-    sockets \
-    # xdebug \
-    yaml \
-    zip \
-    # Disable xdebug & pcov
-    && rm -rf /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-pcov.ini
-
-COPY --from=php-grpc /out/grpc.so /tmp/extensions/grpc.so
-RUN mv /tmp/extensions/*.so $(php-config --extension-dir)/ \
-    && docker-php-ext-enable grpc
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
 
 # Install puppeteer
-RUN npm install --global --unsafe-perm puppeteer@21.1.0
+RUN npm install --global --unsafe-perm puppeteer
 
 # Install bun
 RUN curl -fsSL https://bun.sh/install | bash
@@ -97,4 +144,4 @@ WORKDIR /home/user
 
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["php", "-a"]
+CMD ["bash"]

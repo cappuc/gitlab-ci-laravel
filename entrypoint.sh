@@ -10,13 +10,11 @@ set -e
 # Provide github token if you are using composer a lot in non-interactive mode
 # Otherwise one day it will get stuck with request for authorization
 # https://github.com/settings/tokens
-if [[ ! -z "$COMPOSER_GITHUB" ]]
-then
+if [[ ! -z "$COMPOSER_GITHUB" ]]; then
   composer config --global github-oauth.github.com "$COMPOSER_GITHUB"
 fi
 
-if [[ ! -z "$COMPOSER_GITLAB" ]]
-then
+if [[ ! -z "$COMPOSER_GITLAB" ]]; then
   composer config --global gitlab-token.gitlab.com "$COMPOSER_GITLAB"
 fi
 
@@ -30,11 +28,10 @@ fi
 # before_script:
 # - echo "America/New_York" > /usr/local/etc/php/conf.d/timezone.ini
 
-if [[ ! -z "$TIMEZONE" ]]
-then
+if [[ ! -z "$TIMEZONE" ]]; then
   sudo echo "$TIMEZONE" > /etc/timezone
   sudo dpkg-reconfigure -f noninteractive tzdata
 fi
-sudo sh -c 'echo "date.timezone=`cat /etc/timezone`" > /usr/local/etc/php/conf.d/timezone.ini'
+echo "date.timezone=$(cat /etc/timezone)" | sudo tee ${PHP_INI_DIR}/conf.d/timezone.ini > /dev/null
 
 exec "$@"
