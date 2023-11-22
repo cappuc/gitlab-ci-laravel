@@ -3,12 +3,8 @@
 ARG DEBIAN_VERSION=bookworm
 ARG NODE_VERSION=20
 
-FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
 
-
-ARG DEBIAN_VERSION
 FROM debian:${DEBIAN_VERSION}-slim as base
-COPY --from=xx / /
 ARG TARGETPLATFORM
 WORKDIR /
 
@@ -16,8 +12,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PHP_INI_DIR /etc/php/8.3/cli
 
 # Install dependencies for repository management
-RUN xx-apt-get update \
-    && xx-apt-get install -y ca-certificates curl gnupg
+RUN apt-get update \
+    && apt-get install -y ca-certificates curl gnupg
 
 # Node repository
 ARG NODE_VERSION
@@ -30,15 +26,15 @@ RUN curl -fsSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.o
     && echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ ${DEBIAN_VERSION} main" | tee /etc/apt/sources.list.d/php.list
 
 # Cleanup
-RUN xx-apt-get update \
-    && xx-apt-get upgrade -y \
-    && xx-apt-get autoremove
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get autoremove
 
 
 FROM base as php-extensions
 ARG TARGETPLATFORM
 
-RUN xx-apt-get install -y \
+RUN apt-get install -y \
       libyaml-dev \
       libz-dev \
       php8.3-dev \
@@ -62,7 +58,7 @@ RUN mkdir -p /out \
 FROM base
 
 # Install packages
-RUN xx-apt-get install -y \
+RUN apt-get install -y \
       chromium \
       chromium-driver \
       git \
@@ -76,7 +72,7 @@ RUN xx-apt-get install -y \
       wget
 
 # Install php & extensions
-RUN xx-apt-get install -y \
+RUN apt-get install -y \
       php8.3 \
       php8.3-bcmath \
       php8.3-exif \
