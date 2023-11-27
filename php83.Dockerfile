@@ -41,29 +41,19 @@ RUN apt-get install -y \
       php8.3-xml \
       php-pear
 
-RUN pecl install grpc \
-    && pecl install pcov \
-    && pecl install protobuf \
-    && pecl install redis \
-    && pecl install yaml
+RUN pecl install redis
 
 RUN mkdir -p /out \
-    && cp $(php-config --extension-dir)/grpc.so /out/grpc.so \
-    && cp $(php-config --extension-dir)/pcov.so /out/pcov.so \
-    && cp $(php-config --extension-dir)/protobuf.so /out/protobuf.so \
-    && cp $(php-config --extension-dir)/redis.so /out/redis.so \
-    && cp $(php-config --extension-dir)/yaml.so /out/yaml.so
+    && cp $(php-config --extension-dir)/redis.so /out/redis.so
 
 
 FROM base
 
 # Install packages
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
       chromium \
       chromium-driver \
       git \
-      gnupg \
-      libyaml-0-2 \
       nodejs \
       software-properties-common \
       sudo \
@@ -72,38 +62,36 @@ RUN apt-get install -y \
       wget
 
 # Install php & extensions
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y \
       php8.3 \
       php8.3-bcmath \
       php8.3-exif \
       php8.3-gd \
       php8.3-gettext \
       php8.3-gmp \
-#      php8.3-grpc \
-#      php8.3-imagick \
+      php8.3-grpc \
+      php8.3-imagick \
       php8.3-imap \
       php8.3-intl \
       php8.3-mysqli \
       php8.3-opcache \
-#      php8.3-pcov \
+      php8.3-pcov \
       php8.3-mysql \
-#      php8.3-protobuf \
+      php8.3-protobuf \
 #      php8.3-redis \
       php8.3-soap \
       php8.3-sockets \
 #      php8.3-xdebug \
       php8.3-xml \
-#      php8.3-yaml \
+      php8.3-yaml \
       php8.3-zip
 
-COPY --from=php-extensions /out/*.so /tmp/php-extensions/
-RUN mv /tmp/php-extensions/*.so $(php -r 'echo ini_get("extension_dir");')/ \
-    && rm -rf /tmp/php-extensions \
-    && echo "extension=grpc.so" > /etc/php/8.3/mods-available/grpc.ini && phpenmod grpc \
-    && echo "extension=pcov.so" > /etc/php/8.3/mods-available/pcov.ini \
-    && echo "extension=protobuf.so" > /etc/php/8.3/mods-available/protobuf.ini && phpenmod protobuf \
-    && echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenmod redis \
-    && echo "extension=yaml.so" > /etc/php/8.3/mods-available/yaml.ini && phpenmod yaml
+RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
+
+COPY --from=php-extensions /out/*.so /usr/lib/extensions
+
+RUN echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenmod redis \
+    && phpdismod pcov
 
 # Install yarn & pnpm
 RUN corepack enable \
