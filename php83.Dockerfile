@@ -73,6 +73,7 @@ RUN apt-get update && apt-get install -y \
       php8.3-imagick \
       php8.3-imap \
       php8.3-intl \
+      php8.3-mbstring \
       php8.3-mysqli \
       php8.3-opcache \
       php8.3-pcov \
