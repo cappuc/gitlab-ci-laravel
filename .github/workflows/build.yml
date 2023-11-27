@@ -41,14 +41,6 @@ jobs:
           username: cappuc
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-gitlab-ci-laravel-${{ matrix.tag }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-gitlab-ci-laravel-${{ matrix.tag }}
-
       - name: Build docker image
         uses: docker/build-push-action@v4
         with:
@@ -56,9 +48,7 @@ jobs:
           file: ./${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64
           cache-from: |
-            type=local,src=/tmp/.buildx-cache
             cappuc/gitlab-ci-laravel:${{ matrix.tag }}
-          cache-to: type=local,dest=/tmp/.buildx-cache,mode=all
           push: true
           tags: |
             cappuc/gitlab-ci-laravel:${{ matrix.tag }}
