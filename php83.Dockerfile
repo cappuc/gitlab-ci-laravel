@@ -85,14 +85,14 @@ RUN apt-get update && apt-get install -y \
 #      php8.3-xdebug \
       php8.3-xml \
       php8.3-yaml \
-      php8.3-zip
+      php8.3-zip \
+  && phpdismod pcov
 
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
 COPY --from=php-extensions /out/*.so /usr/lib/extensions
 
-RUN echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenmod redis \
-    && phpdismod pcov
+RUN echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenmod redis
 
 # Install yarn & pnpm
 RUN corepack enable \
