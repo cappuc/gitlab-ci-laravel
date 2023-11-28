@@ -83,6 +83,7 @@ RUN apt-get update && apt-get install -y \
       php8.2-redis \
       php8.2-soap \
       php8.2-sockets \
+      php8.2-sqlite3 \
       php8.2-xdebug \
       php8.2-xml \
       php8.2-yaml \
