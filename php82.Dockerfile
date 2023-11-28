@@ -63,8 +63,9 @@ RUN apt-get update && apt-get install -y \
 
 # Install php & extensions
 RUN apt-get update && apt-get install -y \
-      php8.2-cli \
       php8.2-bcmath \
+      php8.2-cli \
+      php8.2-curl \
       php8.2-exif \
       php8.2-gd \
       php8.2-gettext \
