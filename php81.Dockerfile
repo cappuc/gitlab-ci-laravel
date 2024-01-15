@@ -112,7 +112,10 @@ RUN curl -sS https://getcomposer.org/installer | php \
 RUN npm install --global --unsafe-perm puppeteer
 
 # Install bun
-RUN curl -fsSL https://bun.sh/install | bash
+RUN curl -fsSL https://bun.sh/install | bash \
+    && mv /root/.bun/bin/bun /usr/local/bin/bun \
+    && rm -rf /root/.bun \
+    && chmod a+x /usr/local/bin/bun
 
 COPY php $PHP_INI_DIR/conf.d
 

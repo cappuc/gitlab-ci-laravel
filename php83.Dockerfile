@@ -41,10 +41,10 @@ RUN apt-get install -y \
       php8.3-xml \
       php-pear
 
-RUN pecl install redis
-
-RUN mkdir -p /out \
-    && cp $(php-config --extension-dir)/redis.so /out/redis.so
+#RUN pecl install redis
+#
+#RUN mkdir -p /out \
+#    && cp $(php-config --extension-dir)/redis.so /out/redis.so
 
 
 FROM base
@@ -80,21 +80,21 @@ RUN apt-get update && apt-get install -y \
       php8.3-pcov \
       php8.3-mysql \
       php8.3-protobuf \
-#      php8.3-redis \
+      php8.3-redis \
       php8.3-soap \
       php8.3-sockets \
       php8.3-sqlite3 \
-#      php8.3-xdebug \
+      php8.3-xdebug \
       php8.3-xml \
       php8.3-yaml \
       php8.3-zip \
-  && phpdismod pcov
+  && phpdismod pcov \
+  && phpdismod xdebug
 
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
-COPY --from=php-extensions /out/*.so /usr/lib/extensions
-
-RUN echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenmod redis
+#COPY --from=php-extensions /out/*.so /usr/lib/extensions
+RUN #echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenmod redis
 
 # Install yarn & pnpm
 RUN corepack enable \
@@ -112,7 +112,10 @@ RUN curl -sS https://getcomposer.org/installer | php \
 RUN npm install --global --unsafe-perm puppeteer
 
 # Install bun
-RUN curl -fsSL https://bun.sh/install | bash
+RUN curl -fsSL https://bun.sh/install | bash \
+    && mv /root/.bun/bin/bun /usr/local/bin/bun \
+    && rm -rf /root/.bun \
+    && chmod a+x /usr/local/bin/bun
 
 COPY php $PHP_INI_DIR/conf.d
 
