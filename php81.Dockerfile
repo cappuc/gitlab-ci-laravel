@@ -35,11 +35,11 @@ FROM base as php-extensions
 ARG TARGETPLATFORM
 
 RUN apt-get install -y \
-      libyaml-dev \
-      libz-dev \
-      php8.1-dev \
-      php8.1-xml \
-      php-pear
+    libyaml-dev \
+    libz-dev \
+    php8.1-dev \
+    php8.1-xml \
+    php-pear
 
 #RUN pecl install <extension>
 #
@@ -51,45 +51,45 @@ FROM base
 
 # Install packages
 RUN apt-get update && apt-get install -y \
-      chromium \
-      chromium-driver \
-      git \
-      nodejs \
-      software-properties-common \
-      sudo \
-      tzdata \
-      unzip \
-      wget
+    chromium \
+    chromium-driver \
+    git \
+    nodejs \
+    software-properties-common \
+    sudo \
+    tzdata \
+    unzip \
+    wget
 
 # Install php & extensions
 RUN apt-get update && apt-get install -y \
-      php8.1-bcmath \
-      php8.1-cli \
-      php8.1-curl \
-      php8.1-exif \
-      php8.1-gd \
-      php8.1-gettext \
-      php8.1-gmp \
-      php8.1-grpc \
-      php8.1-imagick \
-      php8.1-imap \
-      php8.1-intl \
-      php8.1-mbstring \
-      php8.1-mysqli \
-      php8.1-opcache \
-      php8.1-pcov \
-      php8.1-mysql \
-      php8.1-protobuf \
-      php8.1-redis \
-      php8.1-soap \
-      php8.1-sockets \
-      php8.1-sqlite3 \
-      php8.1-xdebug \
-      php8.1-xml \
-      php8.1-yaml \
-      php8.1-zip \
-  && phpdismod pcov \
-  && phpdismod xdebug
+    php8.1-bcmath \
+    php8.1-cli \
+    php8.1-curl \
+    php8.1-exif \
+    php8.1-gd \
+    php8.1-gettext \
+    php8.1-gmp \
+    php8.1-grpc \
+    php8.1-imagick \
+    php8.1-imap \
+    php8.1-intl \
+    php8.1-mbstring \
+    php8.1-mysqli \
+    php8.1-opcache \
+    php8.1-pcov \
+    php8.1-mysql \
+    php8.1-protobuf \
+    php8.1-redis \
+    php8.1-soap \
+    php8.1-sockets \
+    php8.1-sqlite3 \
+    php8.1-xdebug \
+    php8.1-xml \
+    php8.1-yaml \
+    php8.1-zip \
+    && phpdismod pcov \
+    && phpdismod xdebug
 
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
@@ -98,8 +98,8 @@ RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
 # Install yarn & pnpm
 RUN corepack enable \
-    && corepack prepare pnpm@latest --activate \
-    && corepack prepare yarn@1.22.11 --activate
+    && corepack install -g pnpm@latest \
+    && corepack install -g yarn@1.22.11
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium

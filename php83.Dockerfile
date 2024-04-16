@@ -35,11 +35,11 @@ FROM base as php-extensions
 ARG TARGETPLATFORM
 
 RUN apt-get install -y \
-      libyaml-dev \
-      libz-dev \
-      php8.3-dev \
-      php8.3-xml \
-      php-pear
+    libyaml-dev \
+    libz-dev \
+    php8.3-dev \
+    php8.3-xml \
+    php-pear
 
 #RUN pecl install redis
 #
@@ -51,45 +51,45 @@ FROM base
 
 # Install packages
 RUN apt-get update && apt-get install -y \
-      chromium \
-      chromium-driver \
-      git \
-      nodejs \
-      software-properties-common \
-      sudo \
-      tzdata \
-      unzip \
-      wget
+    chromium \
+    chromium-driver \
+    git \
+    nodejs \
+    software-properties-common \
+    sudo \
+    tzdata \
+    unzip \
+    wget
 
 # Install php & extensions
 RUN apt-get update && apt-get install -y \
-      php8.3-bcmath \
-      php8.3-cli \
-      php8.3-curl \
-      php8.3-exif \
-      php8.3-gd \
-      php8.3-gettext \
-      php8.3-gmp \
-      php8.3-grpc \
-      php8.3-imagick \
-      php8.3-imap \
-      php8.3-intl \
-      php8.3-mbstring \
-      php8.3-mysqli \
-      php8.3-opcache \
-      php8.3-pcov \
-      php8.3-mysql \
-      php8.3-protobuf \
-      php8.3-redis \
-      php8.3-soap \
-      php8.3-sockets \
-      php8.3-sqlite3 \
-      php8.3-xdebug \
-      php8.3-xml \
-      php8.3-yaml \
-      php8.3-zip \
-  && phpdismod pcov \
-  && phpdismod xdebug
+    php8.3-bcmath \
+    php8.3-cli \
+    php8.3-curl \
+    php8.3-exif \
+    php8.3-gd \
+    php8.3-gettext \
+    php8.3-gmp \
+    php8.3-grpc \
+    php8.3-imagick \
+    php8.3-imap \
+    php8.3-intl \
+    php8.3-mbstring \
+    php8.3-mysqli \
+    php8.3-opcache \
+    php8.3-pcov \
+    php8.3-mysql \
+    php8.3-protobuf \
+    php8.3-redis \
+    php8.3-soap \
+    php8.3-sockets \
+    php8.3-sqlite3 \
+    php8.3-xdebug \
+    php8.3-xml \
+    php8.3-yaml \
+    php8.3-zip \
+    && phpdismod pcov \
+    && phpdismod xdebug
 
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
@@ -98,8 +98,8 @@ RUN #echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenm
 
 # Install yarn & pnpm
 RUN corepack enable \
-    && corepack prepare pnpm@latest --activate \
-    && corepack prepare yarn@1.22.11 --activate
+    && corepack install -g pnpm@latest \
+    && corepack install -g yarn@1.22.11
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
