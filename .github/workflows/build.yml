@@ -17,10 +17,19 @@ jobs:
       matrix:
         include:
           - tag: "php8.1"
+            target: "slim"
+            dockerfile: php81.Dockerfile
+          - tag: "php8.1-browsers"
             dockerfile: php81.Dockerfile
           - tag: "php8.2"
+            target: "slim"
+            dockerfile: php82.Dockerfile
+          - tag: "php8.2-browsers"
             dockerfile: php82.Dockerfile
           - tag: "php8.3"
+            target: "slim"
+            dockerfile: php83.Dockerfile
+          - tag: "php8.3-browsers"
             dockerfile: php83.Dockerfile
 
     steps:
@@ -45,6 +54,7 @@ jobs:
           context: .
           file: ./${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64
+          target: ${{ matrix.target }}
           cache-from: |
             cappuc/gitlab-ci-laravel:${{ matrix.tag }}
           push: true

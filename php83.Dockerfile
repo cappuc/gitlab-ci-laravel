@@ -47,12 +47,10 @@ RUN apt-get install -y \
 #    && cp $(php-config --extension-dir)/redis.so /out/redis.so
 
 
-FROM base
+FROM base as slim
 
 # Install packages
 RUN apt-get update && apt-get install -y \
-    chromium \
-    chromium-driver \
     git \
     nodejs \
     software-properties-common \
@@ -94,22 +92,16 @@ RUN apt-get update && apt-get install -y \
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
 #COPY --from=php-extensions /out/*.so /usr/lib/extensions
-RUN #echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenmod redis
+#RUN echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenmod redis
 
 # Install yarn & pnpm
 RUN corepack enable \
     && corepack install -g pnpm@latest \
     && corepack install -g yarn@1.22.11
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
-
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
-
-# Install puppeteer
-RUN npm install --global --unsafe-perm puppeteer
 
 # Install bun
 RUN curl -fsSL https://bun.sh/install | bash \
@@ -135,3 +127,19 @@ WORKDIR /home/user
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["bash"]
+
+
+FROM slim as browsers
+
+# Install packages
+RUN sudo apt-get update && sudo apt-get install -y \
+    chromium \
+    chromium-driver
+
+# Install puppeteer
+ENV PUPPETEER_SKIP_DOWNLOAD true
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
+RUN sudo -E npm install --global --unsafe-perm puppeteer
+
+# Install playwright dependencies
+RUN sudo npx playwright install-deps
