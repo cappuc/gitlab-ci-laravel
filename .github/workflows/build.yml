@@ -26,6 +26,11 @@ jobs:
             dockerfile: php83.Dockerfile
           - tag: "php8.3-browsers"
             dockerfile: php83.Dockerfile
+          - tag: "php8.4"
+            target: "slim"
+            dockerfile: php84.Dockerfile
+          - tag: "php8.4-browsers"
+            dockerfile: php84.Dockerfile
 
     steps:
       - name: Checkout code

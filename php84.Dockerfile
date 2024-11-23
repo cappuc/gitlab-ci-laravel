@@ -9,7 +9,7 @@ ARG TARGETPLATFORM
 WORKDIR /
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PHP_INI_DIR /etc/php/8.2/cli
+ENV PHP_INI_DIR /etc/php/8.4/cli
 
 # Install dependencies for repository management
 RUN apt-get update \
@@ -37,14 +37,14 @@ ARG TARGETPLATFORM
 RUN apt-get install -y \
     libyaml-dev \
     libz-dev \
-    php8.2-dev \
-    php8.2-xml \
+    php8.4-dev \
+    php8.4-xml \
     php-pear
 
-#RUN pecl install <extension>
+#RUN pecl install redis
 #
 #RUN mkdir -p /out \
-#    && cp $(php-config --extension-dir)/<extension>.so /out/<extension>.so
+#    && cp $(php-config --extension-dir)/redis.so /out/redis.so
 
 
 FROM base as slim
@@ -61,38 +61,38 @@ RUN apt-get update && apt-get install -y \
 
 # Install php & extensions
 RUN apt-get update && apt-get install -y \
-    php8.2-bcmath \
-    php8.2-cli \
-    php8.2-curl \
-    php8.2-exif \
-    php8.2-gd \
-    php8.2-gettext \
-    php8.2-gmp \
-    php8.2-grpc \
-    php8.2-imagick \
-    php8.2-imap \
-    php8.2-intl \
-    php8.2-mbstring \
-    php8.2-mysqli \
-    php8.2-opcache \
-    php8.2-pcov \
-    php8.2-mysql \
-    php8.2-protobuf \
-    php8.2-redis \
-    php8.2-soap \
-    php8.2-sockets \
-    php8.2-sqlite3 \
-    php8.2-xdebug \
-    php8.2-xml \
-    php8.2-yaml \
-    php8.2-zip \
+    php8.4-bcmath \
+    php8.4-cli \
+    php8.4-curl \
+    php8.4-exif \
+    php8.4-gd \
+    php8.4-gettext \
+    php8.4-gmp \
+    php8.4-grpc \
+    php8.4-imagick \
+    php8.4-imap \
+    php8.4-intl \
+    php8.4-mbstring \
+    php8.4-mysqli \
+    php8.4-opcache \
+    php8.4-pcov \
+    php8.4-mysql \
+    php8.4-protobuf \
+    php8.4-redis \
+    php8.4-soap \
+    php8.4-sockets \
+    php8.4-sqlite3 \
+    php8.4-xdebug \
+    php8.4-xml \
+    php8.4-yaml \
+    php8.4-zip \
     && phpdismod pcov \
     && phpdismod xdebug
 
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
 #COPY --from=php-extensions /out/*.so /usr/lib/extensions
-#RUN echo "extension=<extension>.so" > /etc/php/8.3/mods-available/<extension>.ini && phpenmod <extension>
+#RUN echo "extension=redis.so" > /etc/php/8.4/mods-available/redis.ini && phpenmod redis
 
 # Install yarn & pnpm
 RUN corepack enable

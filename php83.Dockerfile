@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.4
 
-ARG DEBIAN_VERSION=bookworm
-ARG NODE_VERSION=20
+ARG DEBIAN_VERSION=12
+ARG NODE_VERSION=22
 
 
 FROM debian:${DEBIAN_VERSION}-slim as base
@@ -95,9 +95,7 @@ RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 #RUN echo "extension=redis.so" > /etc/php/8.3/mods-available/redis.ini && phpenmod redis
 
 # Install yarn & pnpm
-RUN corepack enable \
-    && corepack install -g pnpm@latest \
-    && corepack install -g yarn@1.22.11
+RUN corepack enable
 
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
