@@ -41,10 +41,17 @@ RUN apt-get install -y \
     php8.4-xml \
     php-pear
 
-#RUN pecl install redis
-#
-#RUN mkdir -p /out \
-#    && cp $(php-config --extension-dir)/redis.so /out/redis.so
+
+RUN pecl install grpc \
+    && pecl install protobuf \
+    && pecl install redis \
+    && pecl install yaml
+
+RUN mkdir -p /out \
+    && cp $(php-config --extension-dir)/grpc.so /out/grpc.so \
+    && cp $(php-config --extension-dir)/protobuf.so /out/protobuf.so \
+    && cp $(php-config --extension-dir)/redis.so /out/redis.so \
+    && cp $(php-config --extension-dir)/yaml.so /out/yaml.so
 
 
 FROM base as slim
@@ -68,31 +75,34 @@ RUN apt-get update && apt-get install -y \
     php8.4-gd \
     php8.4-gettext \
     php8.4-gmp \
-    php8.4-grpc \
-    php8.4-imagick \
-    php8.4-imap \
+    # php8.4-grpc \
+    # php8.4-imagick \
+    # php8.4-imap \
     php8.4-intl \
     php8.4-mbstring \
     php8.4-mysqli \
     php8.4-opcache \
-    php8.4-pcov \
+    # php8.4-pcov \
     php8.4-mysql \
-    php8.4-protobuf \
-    php8.4-redis \
+    # php8.4-protobuf \
+    # php8.4-redis \
     php8.4-soap \
     php8.4-sockets \
     php8.4-sqlite3 \
-    php8.4-xdebug \
+    # php8.4-xdebug \
     php8.4-xml \
-    php8.4-yaml \
-    php8.4-zip \
-    && phpdismod pcov \
-    && phpdismod xdebug
+    # php8.4-yaml \
+    php8.4-zip
+# && phpdismod pcov \
+# && phpdismod xdebug
 
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
-#COPY --from=php-extensions /out/*.so /usr/lib/extensions
-#RUN echo "extension=redis.so" > /etc/php/8.4/mods-available/redis.ini && phpenmod redis
+COPY --from=php-extensions /out/*.so /usr/lib/extensions
+RUN echo "extension=grpc.so" > /etc/php/8.4/mods-available/grpc.ini && phpenmod grpc \
+    && echo "extension=protobuf.so" > /etc/php/8.4/mods-available/protobuf.ini && phpenmod protobuf \
+    && echo "extension=redis.so" > /etc/php/8.4/mods-available/redis.ini && phpenmod redis \
+    && apt-get install -y libyaml-0-2 && echo "extension=yaml.so" > /etc/php/8.4/mods-available/yaml.ini && phpenmod yaml
 
 # Install yarn & pnpm
 RUN corepack enable
