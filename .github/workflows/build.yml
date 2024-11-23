@@ -16,11 +16,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - tag: "php8.1"
-            target: "slim"
-            dockerfile: php81.Dockerfile
-          - tag: "php8.1-browsers"
-            dockerfile: php81.Dockerfile
           - tag: "php8.2"
             target: "slim"
             dockerfile: php82.Dockerfile
