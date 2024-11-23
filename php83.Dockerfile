@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-ARG DEBIAN_VERSION=12
+ARG DEBIAN_VERSION=bookworm
 ARG NODE_VERSION=22
 
 
