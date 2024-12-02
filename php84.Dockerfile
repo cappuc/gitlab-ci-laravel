@@ -75,34 +75,34 @@ RUN apt-get update && apt-get install -y \
     php8.4-gd \
     php8.4-gettext \
     php8.4-gmp \
-    # php8.4-grpc \
-    # php8.4-imagick \
-    # php8.4-imap \
+    php8.4-grpc \
+    php8.4-imagick \
+    php8.4-imap \
     php8.4-intl \
     php8.4-mbstring \
     php8.4-mysqli \
     php8.4-opcache \
-    # php8.4-pcov \
+    php8.4-pcov \
     php8.4-mysql \
-    # php8.4-protobuf \
-    # php8.4-redis \
+    php8.4-protobuf \
+    php8.4-redis \
     php8.4-soap \
     php8.4-sockets \
     php8.4-sqlite3 \
-    # php8.4-xdebug \
+    php8.4-xdebug \
     php8.4-xml \
-    # php8.4-yaml \
-    php8.4-zip
-# && phpdismod pcov \
-# && phpdismod xdebug
+    php8.4-yaml \
+    php8.4-zip \
+    && phpdismod pcov \
+    && phpdismod xdebug
 
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
-COPY --from=php-extensions /out/*.so /usr/lib/extensions
-RUN echo "extension=grpc.so" > /etc/php/8.4/mods-available/grpc.ini && phpenmod grpc \
-    && echo "extension=protobuf.so" > /etc/php/8.4/mods-available/protobuf.ini && phpenmod protobuf \
-    && echo "extension=redis.so" > /etc/php/8.4/mods-available/redis.ini && phpenmod redis \
-    && apt-get install -y libyaml-0-2 && echo "extension=yaml.so" > /etc/php/8.4/mods-available/yaml.ini && phpenmod yaml
+# COPY --from=php-extensions /out/*.so /usr/lib/extensions
+# RUN echo "extension=grpc.so" > /etc/php/8.4/mods-available/grpc.ini && phpenmod grpc \
+#     && echo "extension=protobuf.so" > /etc/php/8.4/mods-available/protobuf.ini && phpenmod protobuf \
+#     && echo "extension=redis.so" > /etc/php/8.4/mods-available/redis.ini && phpenmod redis \
+#     && apt-get install -y libyaml-0-2 && echo "extension=yaml.so" > /etc/php/8.4/mods-available/yaml.ini && phpenmod yaml
 
 # Install yarn & pnpm
 RUN corepack enable
