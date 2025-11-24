@@ -1,3 +1,4 @@
+ARG IMAGE_TAG=php8.4
 FROM cappuc/gitlab-ci-laravel:${IMAGE_TAG}
 
 # Install packages

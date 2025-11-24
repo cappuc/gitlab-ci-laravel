@@ -77,7 +77,7 @@ jobs:
           context: .
           file: ./browsers.Dockerfile
           build-args: |
-            IMAGE_TAG=php-${{ matrix.php }}
+            IMAGE_TAG=php${{ matrix.php }}
           platforms: linux/amd64,linux/arm64
           push: true
           tags: cappuc/gitlab-ci-laravel:php${{ matrix.php }}-browsers
