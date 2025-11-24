@@ -11,7 +11,7 @@ WORKDIR /
 
 ARG PHP_VERSION
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PHP_INI_DIR /etc/php/${PHP_VERSION}/cli
+ENV PHP_INI_DIR=/etc/php/${PHP_VERSION}/cli
 
 # Install dependencies for repository management
 RUN apt-get update \
