@@ -75,7 +75,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./php
-          file: ./php/puppeteer.Dockerfile
+          file: ./php/browsers.Dockerfile
           build-args: |
             IMAGE_TAG=php-${{ matrix.php }}
           platforms: linux/amd64,linux/arm64
