@@ -15,7 +15,8 @@ ENV PHP_INI_DIR=/etc/php/${PHP_VERSION}/cli
 
 # Install dependencies for repository management
 RUN apt-get update \
-    && apt-get install -y lsb-release ca-certificates curl gnupg
+    && apt-get install -y lsb-release ca-certificates curl gnupg \
+    && rm -rf /var/lib/apt/lists/*
 
 # Node repository
 ARG NODE_VERSION
@@ -30,27 +31,8 @@ RUN curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/deb
 # Cleanup
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get autoremove
-
-
-FROM base AS php-extensions
-ARG TARGETPLATFORM
-
-RUN apt-get install -y \
-    libyaml-dev \
-    libz-dev \
-    php${PHP_VERSION}-dev \
-    php${PHP_VERSION}-xml \
-    php-pear
-
-
-RUN pecl install grpc \
-    && pecl install protobuf
-
-RUN mkdir -p /out \
-    && cp $(php-config --extension-dir)/grpc.so /out/grpc.so \
-    && cp $(php-config --extension-dir)/protobuf.so /out/protobuf.so
-
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
 
 FROM base
 
@@ -61,7 +43,8 @@ RUN apt-get update && apt-get install -y \
     sudo \
     tzdata \
     unzip \
-    wget
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install php & extensions
 ARG PHP_VERSION
@@ -73,31 +56,32 @@ RUN apt-get update && apt-get install -y \
     php${PHP_VERSION}-gd \
     php${PHP_VERSION}-gettext \
     php${PHP_VERSION}-gmp \
-    # php${PHP_VERSION}-grpc \
     php${PHP_VERSION}-imagick \
     php${PHP_VERSION}-imap \
     php${PHP_VERSION}-intl \
     php${PHP_VERSION}-mbstring \
     php${PHP_VERSION}-mysqli \
-    # php${PHP_VERSION}-pcov \
+    php${PHP_VERSION}-pcov \
     php${PHP_VERSION}-mysql \
-    # php${PHP_VERSION}-protobuf \
+    php${PHP_VERSION}-protobuf \
     php${PHP_VERSION}-redis \
     php${PHP_VERSION}-soap \
     php${PHP_VERSION}-sockets \
     php${PHP_VERSION}-sqlite3 \
-    # php${PHP_VERSION}-xdebug \
+    php${PHP_VERSION}-xdebug \
     php${PHP_VERSION}-xml \
     php${PHP_VERSION}-yaml \
     php${PHP_VERSION}-zip \
+    && rm -rf /var/lib/apt/lists/* \
     && phpdismod pcov \
     && phpdismod xdebug
 
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
-# COPY --from=php-extensions /out/*.so /usr/lib/extensions
-# RUN echo "extension=grpc.so" > /etc/php/${PHP_VERSION}/mods-available/grpc.ini && phpenmod grpc \
-#     && echo "extension=protobuf.so" > /etc/php/${PHP_VERSION}/mods-available/protobuf.ini && phpenmod protobuf
+RUN curl -sS https://php.github.io/pie/pie-nightly.phar -o /usr/local/bin/pie \
+    && chmod +x /usr/local/bin/pie
+
+RUN pie install bsn4/grpc
 
 # Install yarn & pnpm
 RUN corepack enable
