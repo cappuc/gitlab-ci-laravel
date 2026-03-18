@@ -9,13 +9,16 @@ set -e
 
 # Provide github token if you are using composer a lot in non-interactive mode
 # Otherwise one day it will get stuck with request for authorization
-# https://github.com/settings/tokens
 if [[ ! -z "$COMPOSER_GITHUB" ]]; then
   composer config --global github-oauth.github.com "$COMPOSER_GITHUB"
 fi
 
 if [[ ! -z "$COMPOSER_GITLAB" ]]; then
   composer config --global gitlab-token.gitlab.com "$COMPOSER_GITLAB"
+fi
+
+if [[ ! -z "$COMPOSER_KEEPSUIT" ]]; then
+  composer config --global --auth http-basic.composer.keepsuit.com token "$COMPOSER_KEEPSUIT"
 fi
 
 exec "$@"
