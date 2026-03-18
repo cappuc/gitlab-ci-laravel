@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.4
+# syntax=docker/dockerfile:1
 
 ARG DEBIAN_VERSION=trixie
 ARG NODE_VERSION=24
@@ -15,7 +15,8 @@ ENV PHP_INI_DIR=/etc/php/${PHP_VERSION}/cli
 
 # Install dependencies for repository management
 RUN apt-get update \
-    && apt-get install -y lsb-release ca-certificates curl gnupg
+    && apt-get install -y lsb-release ca-certificates curl gnupg \
+    && rm -rf /var/lib/apt/lists/*
 
 # Node repository
 ARG NODE_VERSION
@@ -30,7 +31,8 @@ RUN curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/deb
 # Cleanup
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get autoremove
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
 
 
 # FROM base AS php-extensions
@@ -43,12 +45,9 @@ RUN apt-get update \
 #     php${PHP_VERSION}-xml \
 #     php-pear
 
-
-# RUN pecl install grpc \
-#     && pecl install protobuf
+# RUN pecl install protobuf
 
 # RUN mkdir -p /out \
-#     && cp $(php-config --extension-dir)/grpc.so /out/grpc.so \
 #     && cp $(php-config --extension-dir)/protobuf.so /out/protobuf.so
 
 
@@ -61,7 +60,8 @@ RUN apt-get update && apt-get install -y \
     sudo \
     tzdata \
     unzip \
-    wget
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install php & extensions
 ARG PHP_VERSION
@@ -73,7 +73,6 @@ RUN apt-get update && apt-get install -y \
     php${PHP_VERSION}-gd \
     php${PHP_VERSION}-gettext \
     php${PHP_VERSION}-gmp \
-    php${PHP_VERSION}-grpc \
     php${PHP_VERSION}-imagick \
     php${PHP_VERSION}-imap \
     php${PHP_VERSION}-intl \
@@ -90,14 +89,19 @@ RUN apt-get update && apt-get install -y \
     php${PHP_VERSION}-xml \
     php${PHP_VERSION}-yaml \
     php${PHP_VERSION}-zip \
+    && rm -rf /var/lib/apt/lists/* \
     && phpdismod pcov \
     && phpdismod xdebug
 
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
+RUN curl -sS https://php.github.io/pie/pie-nightly.phar -o /usr/local/bin/pie \
+    && chmod +x /usr/local/bin/pie
+
+RUN pie install bsn4/grpc
+
 # COPY --from=php-extensions /out/*.so /usr/lib/extensions
-# RUN echo "extension=grpc.so" > /etc/php/${PHP_VERSION}/mods-available/grpc.ini && phpenmod grpc \
-#     && echo "extension=protobuf.so" > /etc/php/${PHP_VERSION}/mods-available/protobuf.ini && phpenmod protobuf
+# RUN echo "extension=protobuf.so" > /etc/php/${PHP_VERSION}/mods-available/protobuf.ini && phpenmod protobuf
 
 # Install yarn & pnpm
 RUN corepack enable
