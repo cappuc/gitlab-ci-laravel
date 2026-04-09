@@ -95,10 +95,10 @@ RUN apt-get update && apt-get install -y \
 
 RUN ln -s $(php -r 'echo ini_get("extension_dir");') /usr/lib/extensions
 
-RUN curl -sS https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie \
+RUN curl -sSfL https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie \
     && chmod +x /usr/local/bin/pie
 
-RUN pie install bsn4/grpc
+RUN pie install -n bsn4/grpc
 
 # COPY --from=php-extensions /out/*.so /usr/lib/extensions
 # RUN echo "extension=protobuf.so" > /etc/php/${PHP_VERSION}/mods-available/protobuf.ini && phpenmod protobuf
